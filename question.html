@@ -1,0 +1,468 @@
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <title>포켓몬 성격 테스트</title>
+    <style>
+      body {
+        font-family: 'Segoe UI', sans-serif;
+        background: linear-gradient(to right, #a1c4fd, #c2e9fb);
+        margin: 0;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+      }
+      .container {
+        background: white;
+        border-radius: 20px;
+        padding: 30px;
+        max-width: 500px;
+        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+        text-align: center;
+      }
+      h1 {
+        margin-bottom: 20px;
+      }
+      .question {
+        font-size: 1.2em;
+        margin-bottom: 20px;
+      }
+      .btn {
+        display: block;
+        width: 100%;
+        margin: 10px 0;
+        padding: 12px;
+        font-size: 1em;
+        background-color: #4facfe;
+        border: none;
+        border-radius: 10px;
+        color: white;
+        cursor: pointer;
+        transition: background 0.3s ease;
+      }
+      .btn:hover {
+        background-color: #00f2fe;
+      }
+      .result {
+        font-size: 1.4em;
+        margin-top: 20px;
+      }
+      .hidden {
+        display: none;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>포켓몬 성격 테스트</h1>
+      <div id="quiz"></div>
+      <div id="result" class="result hidden"></div>
+      <button class="btn" onclick="goBack()">← 뒤로가기</button>
+    </div>
+
+    <script>
+      const questions = [
+        {
+          question:
+            '마라톤 시작부터 갑자기 넘어지고 말았다. 너라면 어떻게 하겠는가?',
+          answers: [
+            { text: '아직 포기하지 않아!', scores: { 노력: 3, 용감: 2 } },
+            {
+              text: '절망해서 주저앉는다',
+              scores: { 변덕: 2, 성급: 1, 겁: 1 },
+            },
+          ],
+        },
+        {
+          question: '영화관에 왔다. 다음 중 어떤 걸 보고 싶은가?',
+          answers: [
+            { text: '액션', scores: { 장난: 2, 건방: 1 } },
+            { text: '감동', scores: { 노력: 2 } },
+            { text: '멜로', scores: { 변덕: 2 } },
+          ],
+        },
+        {
+          question: '친구가 비밀을 털어놨다. 너는?',
+          answers: [
+            { text: '절대 말 안 해', scores: { 냉정: 2 } },
+            { text: '믿어줘서 고맙다고 한다', scores: { 솔직: 2 } },
+            {
+              text: '다른 친구에게도 말해버린다',
+              scores: { 건방: 2, 덜렁: 1 },
+            },
+          ],
+        },
+        {
+          question: '너의 공부 스타일은?',
+          answers: [
+            { text: '매일 꾸준히', scores: { 노력: 2 } },
+            { text: '기분이 내킬 때 한다', scores: { 성급: 1, 변덕: 2 } },
+            { text: '핵심만 집어서', scores: { 게으른: 2 } },
+            { text: '혼자서는 못한다...', scores: { 외로움: 2 } },
+          ],
+        },
+        {
+          question:
+            '별로 재미는 없는 것 같은데 주변의 모두가 크게 웃고있다. 너는 어떤가?',
+          answers: [
+            { text: '딱히 아무렇지 않다', scores: { 용감: 2, 대담: 1 } },
+            { text: '따라서 웃어본다', scores: { 겁: 1, 외로움: 2 } },
+            { text: '상황에 따라 다르다', scores: { 변덕: 1, 냉정: 1 } },
+          ],
+        },
+        {
+          question: '시험지에 오타를 발견했다!',
+          answers: [
+            { text: '즉시 선생님께 알린다', scores: { 용감: 2 } },
+            { text: '조용히 맞춰서 푼다', scores: { 게으른: 2 } },
+            { text: '친구들에게만 알려준다', scores: { 장난: 1 } },
+          ],
+        },
+        {
+          question: '스위치를 보면 무심코 눌러보고 싶어지는가?',
+          answers: [
+            { text: '예', scores: { 성급: 2 } },
+            { text: '아니오', scores: { 냉정: 2 } },
+          ],
+        },
+        {
+          question: '무엇을 하든 최고 되어야한다고 생각하는가?',
+          answers: [
+            { text: '예', scores: { 건방: 2, 용감: 1 } },
+            { text: '아니오', scores: { 변덕: 2, 게으른: 1 } },
+          ],
+        },
+        {
+          question: '내가 제일 아끼는 물건을 친구가 빌려가겠다고 한다',
+          answers: [
+            { text: '기쁜 마음으로 빌려준다', scores: { 명랑: 2 } },
+            { text: '조건을 단다', scores: { 건방: 1, 외로움: 1 } },
+            { text: '차마 못 빌려준다', scores: { 겁: 1 } },
+          ],
+        },
+        {
+          question: '식당에서 주문한 음식이 30분이 넘게게 안 나온다',
+          answers: [
+            {
+              text: '직원을 호출해 따진다',
+              scores: { 용감: 2, 성급: 1, 솔직: 1, 천진난만: 1 },
+            },
+            { text: '조용히 기다린다', scores: { 냉정: 2, 게으른: 1 } },
+          ],
+        },
+        {
+          question: '중요한 시험 전날 밤이다',
+          answers: [
+            { text: '새벽까지 공부한다', scores: { 노력: 2 } },
+            { text: '일찍 자고 일찍 일어난다', scores: { 냉정: 1 } },
+            { text: '공부는 이미 다 했다', scores: { 건방: 2, 천진난만: 1 } },
+            { text: '운명에 맡긴다.', scores: { 게으른: 2, 대담: 1, 용감: 1 } },
+          ],
+        },
+        {
+          question: '금연구역에서 누군가가 담배를 핀다. ',
+          answers: [
+            { text: '즉시 항의한다', scores: { 용감: 2, 대담: 1 } },
+            { text: '자리를 옮긴다', scores: { 냉정: 1, 겁: 2 } },
+          ],
+        },
+        {
+          question: '시킨 음식과 다른 음식이 나왔다.',
+          answers: [
+            {
+              text: '바로 교환 요청한다',
+              scores: { 용감: 1, 대담: 1, 성급: 1 },
+            },
+            { text: '그냥 먹는다 ', scores: { 게으른: 2, 겁: 1 } },
+            {
+              text: '가격을 비교해보고 결정한다',
+              scores: { 천진난만: 2, 변덕: 1 },
+            },
+          ],
+        },
+        {
+          question: '길에서 지인을 봤는데 상대방이 나를 못 알아봤다',
+          answers: [
+            { text: '적극적으로 먼저 인사한다', scores: { 대담: 1 } },
+            { text: '나도 모른 척 지나간다', scores: { 겁: 1 } },
+            {
+              text: "메세지로 '너 방금 나 못 본 거 맞지?'라고 묻는다",
+              scores: { 장난: 2 },
+            },
+            { text: '계속 뒤에서 쳐다본다', scores: { 변덕: 1 } },
+          ],
+        },
+        {
+          question: '과제 마감 30분 전에 파일이 삭제됐다',
+          answers: [
+            {
+              text: '당황하지 않고 백업 파일이 있는지 찾는다',
+              scores: { 냉정: 2 },
+            },
+            { text: '교수님께 연기 요청을 한다', scores: { 솔직: 1 } },
+            { text: '새로 만들려고 필사적으로 노력한다', scores: { 노력: 2 } },
+            { text: '포기한다', scores: { 덜렁: 2 } },
+          ],
+        },
+        {
+          question: '새로 산 옷을 입고 나왔는데 친구가 똑같은 옷을 입고 왔다',
+          answers: [
+            { text: '웃으며 커플티네요라고 말한다', scores: { 명랑: 2 } },
+            { text: '속으로만 부끄러워한다', scores: { 외로움: 1 } },
+            { text: '바로 옷을 갈아입는다', scores: { 성급: 2 } },
+            { text: '친구에게 왜 따라입냐고 묻는다', scores: { 건방: 1 } },
+          ],
+        },
+        {
+          question: '마트에 왔는데 이 물건 엄청 싸다! ',
+          answers: [
+            {
+              text: '바로 사버린다!',
+              scores: { 성급: 2, 변덕: 1, 천진난만: 1 },
+            },
+            { text: '정말 필요한 물건인지 생각한다', scores: { 냉정: 3 } },
+          ],
+        },
+      ];
+
+      const pokemonMap = {
+        남자: {
+          노력: '아차모',
+          솔직: '파이리',
+          용감: '루카리오',
+          장난: '팬텀',
+          변덕: '마자용',
+          덜렁: '물짱이',
+          대담: '번치코',
+          개구쟁이: '판짱',
+          게으른: '게을킹',
+          겁: '깜지곰',
+          외로움: ' 이상해씨',
+          냉정: '잠만보',
+          명량: ' 해루미 ',
+          천진난만: ' 악비아르',
+          성급: '갑주무사 ',
+          건방: '카푸꼬꼬꼭',
+        },
+        여자: {
+          노력: '나무지기',
+          솔직: '비리디온 ',
+          용감: '신뇽',
+          장난: '나오하',
+          변덕: '냐옹마',
+          냉정: '나몰빼미',
+          대담: '꼬부기',
+          개구쟁이: '염버니',
+          게으른: '몽얌나',
+          겁: '파르빗 ',
+          외로움: '푸크린 ',
+          덜렁: '고디탱',
+          명량: '아르코',
+          천진난만: ' 럭키 ',
+          성급: '에나비',
+          건방: ' 입치트 ',
+        },
+      };
+
+      let currentQuestion = 0;
+      let gender = '남자';
+      const scores = {};
+      const quizDiv = document.getElementById('quiz');
+      const resultDiv = document.getElementById('result');
+
+      function showGenderSelect() {
+        quizDiv.innerHTML = `
+        <div class="question">당신의 성별은?</div>
+        <button class="btn" onclick="selectGender('남자')">남자</button>
+        <button class="btn" onclick="selectGender('여자')">여자</button>
+      `;
+      }
+
+      function selectGender(g) {
+        gender = g;
+        showQuestion();
+      }
+
+      function showQuestion() {
+        const q = questions[currentQuestion];
+        quizDiv.innerHTML = `<div class="question">${q.question}</div>`;
+        q.answers.forEach((a, i) => {
+          const btn = document.createElement('button');
+          btn.className = 'btn';
+          btn.textContent = a.text;
+          btn.onclick = () => {
+            for (const trait in a.scores) {
+              scores[trait] = (scores[trait] || 0) + a.scores[trait];
+            }
+            currentQuestion++;
+            if (currentQuestion < questions.length) {
+              showQuestion();
+            } else {
+              showResult();
+            }
+          };
+          quizDiv.appendChild(btn);
+        });
+      }
+
+      const traitDetails = {
+        남자: {
+          노력: {
+            description: '당신은 항상 최선을 다하며 꾸준함의 아이콘입니다!',
+            image: 'images/male_노력.png',
+          },
+          용감: {
+            description:
+              '어떤 일이든 두려워하지 않고 맞서는 용감한 성격이에요.',
+            image: 'images/male_용감.png',
+          },
+          변덕: {
+            description: '감정 기복이 크고, 다채로운 매력을 지녔어요.',
+            image: 'images/male_변덕.png',
+          },
+          대담: {
+            description: '겁 없이 새로운 일에 도전하는 대담한 스타일이에요!',
+            image: 'images/male_대담.png',
+          },
+          겁: {
+            description: '조심스럽고 섬세하지만 때론 주저할 때도 있어요.',
+            image: 'images/male_겁.png',
+          },
+          냉정: {
+            description: '어떤 상황에서도 침착하고 안정적인 성격이에요.',
+            image: 'images/male_냉정.png',
+          },
+          게으른: {
+            description: '편안함을 추구하며 여유롭게 살아가길 좋아해요.',
+            image: 'images/male_게으른.png',
+          },
+          덜렁: {
+            description: '어딘가 허둥지둥하지만 그 모습도 귀여운 매력 포인트!',
+            image: 'images/male_덜렁.png',
+          },
+          솔직: {
+            description: '거짓말 못 하고 속이 훤히 들여다보이는 솔직한 타입!',
+            image: 'images/male_솔직.png',
+          },
+          명랑: {
+            description: '언제나 활기찬 에너지! 주변 분위기 메이커예요.',
+            image: 'images/male_명랑.png',
+          },
+          천진난만: {
+            description:
+              '해맑고 순수한 매력이 넘쳐요. 누구든 기분 좋아지게 만들죠!',
+            image: 'images/male_천진난만.png',
+          },
+          성급: {
+            description: '생각보다 행동이 앞서는 빠른 추진력의 소유자예요.',
+            image: 'images/male_성급.png',
+          },
+          건방: {
+            description: '자신감 넘치고 때론 우쭐하지만 그게 또 멋있죠!',
+            image: 'images/male_건방.png',
+          },
+          외로움: {
+            description: '혼자 있으면 외롭지만, 사람들과 함께할 때 더 빛나요.',
+            image: 'images/male_외로움.png',
+          },
+          냉정: {
+            description: '상황을 이성적으로 판단하는 냉철한 성격이에요.',
+            image: 'images/male_냉정.png',
+          },
+        },
+        여자: {
+          노력: {
+            description:
+              '성실함과 꾸준함이 매력인 당신! 주변에 좋은 영향을 줘요.',
+            image: 'images/female_노력.png',
+          },
+          용감: {
+            description:
+              '두려움 없이 당당하게! 용감한 당신은 모두의 롤모델이에요.',
+            image: 'images/female_용감.png',
+          },
+          변덕: {
+            description:
+              '기분 따라 변하는 자유로운 영혼! 예측 불가 매력이 있어요.',
+            image: 'images/female_변덕.png',
+          },
+          대담: {
+            description: '큰일에도 당황하지 않고, 자신감 있게 나아가는 당신!',
+            image: 'images/female_대담.png',
+          },
+          겁: {
+            description: '작은 일에도 깜짝 놀라지만, 섬세한 감성을 가졌어요.',
+            image: 'images/female_겁.png',
+          },
+          냉정: {
+            description: '늘 냉정하고 조용한 분위기를 주는 존재입니다.',
+            image: 'images/female_냉정.png',
+          },
+          게으른: {
+            description: '빠듯한 건 싫어! 여유를 중요시하는 스타일이에요.',
+            image: 'images/female_게으른.png',
+          },
+          덜렁: {
+            description:
+              '자주 깜빡하고 덜렁대지만, 사랑스러운 매력의 소유자예요.',
+            image: 'images/female_덜렁.png',
+          },
+          솔직: {
+            description:
+              '거짓 없이 생각을 바로 표현하는 투명한 마음을 가졌어요.',
+            image: 'images/female_솔직.png',
+          },
+          명랑: {
+            description: '활발하고 밝은 분위기로 주변을 웃음 짓게 만들어요!',
+            image: 'images/female_명랑.png',
+          },
+          천진난만: {
+            description: '세상을 순수하게 바라보는 순둥이 같은 매력이 있어요.',
+            image: 'images/female_천진난만.png',
+          },
+          성급: {
+            description: '생각보다 행동이 먼저! 빠른 실행력은 당신의 무기예요.',
+            image: 'images/female_성급.png',
+          },
+          건방: {
+            description: '자신감이 넘치고 당당한 태도가 눈에 띄는 당신!',
+            image: 'images/female_건방.png',
+          },
+          외로움: {
+            description:
+              '사람들과 함께 있는 걸 좋아하지만 가끔은 조용한 위로가 필요해요.',
+            image: 'images/female_외로움.png',
+          },
+          냉정: {
+            description: '언제나 침착하게 판단하는 지적인 매력의 소유자예요.',
+            image: 'images/female_냉정.png',
+          },
+        },
+      };
+
+      function showResult() {
+        quizDiv.classList.add('hidden');
+        const topTrait = Object.entries(scores).sort(
+          (a, b) => b[1] - a[1]
+        )[0][0];
+        const matchedPokemon = pokemonMap[gender][topTrait] || '포켓몬';
+
+        const detail = traitDetails[gender]?.[topTrait] || {
+          description: '당신만의 독특한 매력을 지닌 사람이군요!',
+          image: 'images/default.png',
+        };
+
+        resultDiv.classList.remove('hidden');
+        resultDiv.innerHTML = `
+    <h2>당신의 성격은 <strong>${topTrait}</strong>!</h2>
+    <p>${detail.description}</p>
+    <p>어울리는 포켓몬은 <strong>${matchedPokemon}</strong>입니다!</p>
+    <img src="${detail.image}" alt="${matchedPokemon}" style="max-width: 200px; margin-top: 15px; border-radius: 15px; box-shadow: 0 4px 12px rgba(0,0,0,0.2);">
+  `;
+      }
+
+      showGenderSelect();
+    </script>
+  </body>
+</html>
