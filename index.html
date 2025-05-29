@@ -1,18 +1,121 @@
 <!DOCTYPE html>
 <html lang="ko">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>당신이 포켓몬이었다면?</title>
-    <link rel="stylesheet" href="styles.css">
-</head>
-<body>
+    <link rel="stylesheet" href="styles.css" />
+    <style>
+      @import url('https://fonts.googleapis.com/css2?family=Gmarket+Sans:wght@500&display=swap');
+
+      body {
+        margin: 0;
+        font-family: 'Gmarket Sans', sans-serif;
+        background: linear-gradient(135deg, #9de1fe, #ffd5ec);
+        overflow: hidden;
+      }
+
+      header {
+        text-align: center;
+        padding: 80px 20px 40px;
+        color: #fff;
+        text-shadow: 2px 2px 4px #000;
+        animation: fadeIn 2s ease-in-out;
+      }
+
+      header h1 {
+        font-size: 3rem;
+        margin: 0;
+      }
+
+      main {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 50vh;
+        animation: fadeInUp 2s ease-out 0.5s forwards;
+        opacity: 0;
+      }
+
+      button {
+        font-size: 1.5rem;
+        padding: 15px 40px;
+        border: none;
+        border-radius: 40px;
+        background: linear-gradient(45deg, #ffcc70, #ff6b6b);
+        color: white;
+        cursor: pointer;
+        box-shadow: 0 0 20px rgba(255, 107, 107, 0.6);
+        transition: all 0.3s ease;
+        animation: pulse 2s infinite;
+      }
+
+      button:hover {
+        transform: scale(1.05);
+        box-shadow: 0 0 30px rgba(255, 255, 255, 0.8), 0 0 50px #ff6b6b;
+      }
+
+      /* Background clouds */
+      .cloud {
+        position: absolute;
+        top: 0;
+        width: 300%;
+        height: 100%;
+        background: url('img/cloud.png') repeat-x;
+        animation: moveClouds 60s linear infinite;
+        opacity: 0.3;
+        pointer-events: none;
+      }
+
+      /* Animations */
+      @keyframes fadeIn {
+        0% {
+          opacity: 0;
+          transform: translateY(-20px);
+        }
+        100% {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      @keyframes fadeInUp {
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      @keyframes pulse {
+        0%,
+        100% {
+          box-shadow: 0 0 15px #ff6b6b;
+        }
+        50% {
+          box-shadow: 0 0 30px #ffd166;
+        }
+      }
+
+      @keyframes moveClouds {
+        0% {
+          transform: translateX(0);
+        }
+        100% {
+          transform: translateX(-1000px);
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="cloud"></div>
     <header>
-        <h1>당신이 포켓몬이었다면?</h1>
-        <p></p>
+      <h1>당신이 포켓몬이었다면?</h1>
+      <p>성격 테스트를 통해 나의 포켓몬 유형을 알아보자!</p>
     </header>
     <main>
-        <button onclick="location.href='question.html'">설문 시작</button>
+      <button onclick="location.href='question.html'">
+        ✨ 설문 시작하기 ✨
+      </button>
     </main>
-</body>
+  </body>
 </html>
